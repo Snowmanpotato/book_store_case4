@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/assets/css/css_login.css">
+    <link rel="stylesheet" href="/assets/fontawesome-free-6.2.0-web/css/fontawesome.css">
+    <link rel="stylesheet" href="/assets/iziToast/dist/css/iziToast.css">
+    <link rel="stylesheet" href="/assets/sweet-alert/sweetalert2.min.css">
+</head>
+<body>
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form id="frmRegister">
+            <h1>Sign Up</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social"><i class="fab fa-google"></i></a>
+                <a href="#" class="social"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <span>or use your email for registration</span>
+<!--            <div class="role">-->
+<!--                <div class="custom-options">-->
+<!--                    <select id="roleSelectRegister" name="roleSelectRegister" class="form-select">-->
+<!--                        <option value="1">ADMIN</option>-->
+<!--                        <option value="2">USER</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+            <input type="text" placeholder="Name" id="fullNameRegister" name="fullNameRegister"/>
+            <input type="email" placeholder="Email" id="emailRegister" name="emailRegister"/>
+            <input type="password" placeholder="Password" id="passwordRegister" name="passwordRegister"/>
+            <button type="button" id="btnRegister">Sign Up</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form id="frmLogin">
+            <h1>Sign In</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social"><i class="fab fa-google"></i></a>
+                <a href="#" class="social"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <span>or use your account</span>
+            <input type="email" placeholder="Email" id="emailLogin" name="emailLogin"/>
+            <input type="password" placeholder="Password" id="passwordLogin" name="passwordLogin"/>
+            <a href="#">Forgot your password?</a>
+            <button type="button" value="1" id="btnLogin">Sign In</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>Please login with your personal info</p>
+                <button class="ghost" id="changeToSignIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start your journey with us</p>
+                <button class="ghost" id="changeToSignUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/js_login.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/assets/jquery/jquery-3.6.1.min.js"></script>
+<script src="/assets/iziToast/dist/js/iziToast.min.js"></script>
+<script src="/assets/sweet-alert/sweetalert2@11.js"></script>
+<script>
+
+    const page = {
+        urls: {
+            login: App.AUTH_URL + "/login",
+            register: App.AUTH_URL + "/register",
+            getAllRoles: App.ROLE_API,
+        },
+        elements: {},
+        commands: {},
+        initializeEventControl: {}
+    }
+
+    page.elements.frmLogin = $("#frmLogin");
+    page.elements.emailLogin = $("#emailLogin");
+    page.elements.passwordLogin = $("#passwordLogin");
+    page.elements.btnLogin = $("#btnLogin");
+    page.elements.frmRegister = $("#frmRegister");
+    page.elements.fullNameRegister = $("#fullNameRegister");
+    page.elements.emailRegister = $("#emailRegister");
+    page.elements.passwordRegister = $("#passwordRegister");
+    page.elements.roleSelectRegister = $("#roleSelectRegister");
+    page.elements.btnRegister = $("#btnRegister");
+    page.elements.changeToSignIn = $("#changeToSignIn")
+
+
+    page.commands.login = () => {
+        let user = {
+            register: "http://localhost:8080/api/auth/login",
+            getAllRoles: App.ROLE_API,
+            username: page.elements.emailLogin.val(),
+            password: page.elements.passwordLogin.val()
+        }
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: "POST",
+            url: page.urls.login,
+            data: JSON.stringify(user)
+        }).done((resp) => {
+            App.SweetAlert.redirectPage("Logged in successfully!!", "<b></b>", 1000);
+            setTimeout(function () {
+                window.location.href = "/products";
+            }, 1000);
+
+        }).fail(function (jqXHR) {
+            if (jqXHR.responseJSON) {
+                if (jqXHR.responseJSON.message) {
+                    App.IziToast.showErrorAlertLeft(jqXHR.responseJSON.message);
+                } else {
+                    $.each(jqXHR.responseJSON, function (key, value) {
+                        App.IziToast.showErrorAlertLeft(value);
+                    });
+                }
+            } else {
+                App.IziToast.showErrorAlertLeft("Email or password is incorrect. Please check again!");
+            }
+        });
+    }
+
+
+    $(() => {
+        page.commands.loadData();
+        page.initializeEventControl();
+    });
+
+
+    // page.commands.getAllRole = () => {
+    //     return $.ajax({
+    //         headers: {
+    //             "accept": "application/json",
+    //             "content-type": "application/json"
+    //         },
+    //         type: "GET",
+    //         url: page.urls.getAllRoles
+    //         // url: "http://localhost:8080/api/roles"
+    //     })
+    //         .done((data) => {
+    //             console.log('data: ', data)
+    //             data.map(item => {
+    //                 let str = `<option value="${item.id}">${item.code}</option>`;
+    //                 page.elements.roleSelectRegister.append(str);
+    //             })
+    //         })
+    //         .fail((error) => {
+    //             console.log(error);
+    //         })
+    // }
+
+    page.commands.register = () => {
+        let user = {
+
+            fullName: page.elements.fullNameRegister.val(),
+            username: page.elements.emailRegister.val(),
+            password: page.elements.passwordRegister.val(),
+            // role: {
+            //     id: page.elements.roleSelectRegister.val(),
+            //     code: page.elements.roleSelectRegister.find("option:selected").text()
+            // }
+        }
+
+        return $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "POST",
+            url: page.urls.register,
+            data: JSON.stringify(user)
+        }).done((resp) => {
+            App.IziToast.showSuccessAlertLeft("Sign Up Success");
+            App.IziToast.showSuccessAlertLeft("Going to the login form");
+
+            page.elements.emailLogin.val(page.elements.emailRegister.val());
+            page.elements.passwordLogin.val(page.elements.passwordRegister.val());
+            page.elements.frmRegister[0].reset();
+
+            page.elements.changeToSignIn.click()
+        }).fail(function (jqXHR) {
+            if (jqXHR.responseJSON) {
+                if (jqXHR.responseJSON.message) {
+                    App.IziToast.showErrorAlertLeft(jqXHR.responseJSON.message);
+                } else {
+                    $.each(jqXHR.responseJSON, function (key, value) {
+                        App.IziToast.showErrorAlertLeft(value);
+                    });
+                }
+            } else {
+                App.IziToast.showErrorAlertLeft("Unable to create an account, please check again");
+            }
+        });
+    }
+
+    page.commands.loadData = () => {
+        // page.commands.getAllRole();
+    }
+
+    page.initializeEventControl = () => {
+        page.elements.btnRegister.on("click", () => {
+            page.commands.register();
+        })
+        page.elements.btnLogin.on("click", () => {
+            page.commands.login();
+        })
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+.user-box .user-info{
+    z-index: unset;
+}
+.content-page .content {
+    padding: 20px 15px 140px 15px;
+    min-height: unset;
+    position: relative;
+}
+.modal-alert-danger {
+    padding: 10px 35px;
+    margin-bottom: 15px;
+    color: #842029;
+    border-color: #f5c2c7;
+}
+
+.modal-alert-danger label {
+    display: list-item;
+}
+
+.frm-alert-danger label {
+    display: list-item;
+}
+
+.frm-alert-danger {
+    color: #842029;
+    border-color: #f5c2c7;
+}
+
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+    margin: 0 0 5px ;
+    cursor: pointer;
+}
+
+.swal2-loader .swal2-deny swal2-styled{
+    margin:0 10px;
+}
